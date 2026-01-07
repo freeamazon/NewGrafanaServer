@@ -134,8 +134,3 @@ docker compose down
 
 ---
 
-If you want, I can:
-
-* Match this style for the **monitoring server README**
-* Add a **Troubleshooting** section
-* Add a **Quick checklist** for new servers
