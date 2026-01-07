@@ -1,10 +1,3 @@
-Absolutely — here is a **clean, minimal, well-formatted README** that looks good when copied into GitHub.
-No clutter, no repetition, clear headings, and professional formatting.
-
-You can **copy–paste this directly**.
-
----
-
 # Server Monitoring Agent
 
 ## Overview
