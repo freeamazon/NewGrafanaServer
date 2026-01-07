@@ -1,111 +1,141 @@
-Server Monitoring Agent (Node Exporter + Promtail)
-Overview
+Absolutely — here is a **clean, minimal, well-formatted README** that looks good when copied into GitHub.
+No clutter, no repetition, clear headings, and professional formatting.
 
-This repository is used on application and database servers to send system metrics and logs to a centralized monitoring server. It runs Node Exporter to expose system-level metrics for Prometheus and Promtail to collect logs from the server and push them to Loki. Both services are managed entirely using Docker Compose, with no manual installation of binaries required.
+You can **copy–paste this directly**.
 
-Folder Structure
+---
 
-Ensure the directory layout looks exactly like this:
+# Server Monitoring Agent
 
+## Overview
+
+This repository is used on individual servers to send system metrics and logs to a centralized monitoring server. It runs **Node Exporter** for exposing system metrics and **Promtail** for collecting and forwarding logs. Both services are managed using **Docker Compose**, with no manual binary installation required.
+
+---
+
+## Directory Structure
+
+```
 NewGrafanaServer/
 ├── docker-compose.yml
 └── promtail.yml
+```
 
+---
 
-docker-compose.yml starts Node Exporter and Promtail
+## Prerequisites
 
-promtail.yml defines which logs are collected and where they are sent
+* Linux server (Ubuntu recommended)
+* Docker
+* Docker Compose plugin
+* Network access to the monitoring server
 
-Prerequisites
+  * Port `9100` (Node Exporter)
+  * Port `3100` (Loki)
 
-Linux server (Ubuntu recommended)
+---
 
-Docker installed
+## Setup Instructions
 
-Docker Compose plugin installed
+### 1. Install Docker & Docker Compose
 
-Network connectivity to the monitoring server
-
-Port 3100 (Loki)
-
-Port 9100 (Node Exporter)
-
-Installation Steps
-1. Install Docker and Docker Compose
-
-Run the following commands on the server:
-
+```bash
 sudo apt update
 sudo apt install -y docker.io docker-compose-plugin
 sudo systemctl enable docker
 sudo systemctl start docker
+```
 
-2. Download the Agent Repository
+---
 
-Clone the repository or copy the files manually:
+### 2. Download the Repository
 
+```bash
 git clone <server-repo-url>
 cd NewGrafanaServer
+```
 
+Ensure both `docker-compose.yml` and `promtail.yml` are present in this directory.
 
-If downloading manually, ensure both docker-compose.yml and promtail.yml are inside the NewGrafanaServer directory.
+---
 
-3. Configure Promtail
+### 3. Configure Promtail
 
-Edit promtail.yml and confirm the Loki endpoint points to the monitoring server:
+Edit `promtail.yml` and set the Loki endpoint to the monitoring server:
 
+```bash
 nano promtail.yml
+```
 
-
-Ensure it contains:
-
+```yaml
 clients:
   - url: http://<MONITORING_PC_IP>:3100/loki/api/v1/push
+```
 
+Replace `<MONITORING_PC_IP>` with the actual IP or hostname.
 
-Replace <MONITORING_PC_IP> with the actual IP or hostname of the monitoring server.
+---
 
-4. Start Node Exporter and Promtail
+### 4. Start the Services
 
-From inside the NewGrafanaServer directory, start both services:
-
+```bash
 docker compose up -d
+```
 
+This command automatically downloads and starts:
 
-This command will:
+* **Node Exporter** (exposes metrics on port `9100`)
+* **Promtail** (collects logs from `/var/log`)
 
-Automatically download the Node Exporter Docker image
+---
 
-Automatically download the Promtail Docker image
+### 5. Verify
 
-Start both services in the background
-
-No manual installation of Node Exporter is required.
-
-5. Verify the Services
-
-Check that both containers are running:
-
+```bash
 docker compose ps
+```
 
+Check Promtail logs:
 
-Check Promtail logs to ensure logs are being sent:
-
+```bash
 docker compose logs -f promtail
+```
 
-Verification from Monitoring Server
+---
 
-Node Exporter metrics should be reachable at:
+## Verification (Monitoring Server)
 
-http://<SERVER_IP>:9100/metrics
+* Metrics:
 
+  ```
+  http://<SERVER_IP>:9100/metrics
+  ```
+* Logs (Grafana → Explore → Loki):
 
-Logs should be visible in Grafana under Explore → Loki, for example:
+  ```logql
+  {job="koha"}
+  ```
 
-{job="koha"}
+---
 
-Stopping the Agent
+## Stop the Agent
 
-To stop both Node Exporter and Promtail:
-
+```bash
 docker compose down
+```
+
+---
+
+## Notes
+
+* Deploy this setup **once per server**
+* Do not run this repository on the monitoring server
+* No manual Node Exporter installation is required
+
+---
+
+If you want, I can:
+
+* Match this style for the **monitoring server README**
+* Add a **Troubleshooting** section
+* Add a **Quick checklist** for new servers
